@@ -1,69 +1,84 @@
-const envelopeBox  = document.getElementById("envelopeBox");
-const paperMessage = document.getElementById("paperMessage");
-const errorText    = document.getElementById("errorText");
-const linkBox      = document.getElementById("linkBox");
-const formSection  = document.getElementById("form-section");
-const arrowSection = document.getElementById("arrowSection");
+  const envelopeBox = document.getElementById("envelopeBox");
+  const paperMessage = document.getElementById("paperMessage");
+  const errorText = document.getElementById("errorText");
+  const linkBox = document.getElementById("linkBox");
+  const formSection = document.getElementById("form-section");
+  const arrowSection = document.getElementById("arrowSection");
+  const shareLinkText = document.getElementById("shareLinkText");
+  const copyPopup = document.getElementById("copyPopup");
 
-envelopeBox.addEventListener("click", () => envelopeBox.classList.toggle("open"));
+  envelopeBox.addEventListener("click", () => {
+    envelopeBox.classList.toggle("open");
+  });
 
-async function sendMessage() {
-  const name = document.getElementById("nameInput").value.trim().toLowerCase();
-  const message = document.getElementById("msgInput").value.trim();
-  errorText.textContent = "";
+  function sendMessage() {
+    const name = document.getElementById("nameInput").value.trim().toLowerCase();
+    const message = document.getElementById("msgInput").value.trim();
+    errorText.textContent = "";
 
-  if (!name || !message) {
-    errorText.textContent = "Please enter both name and message.";
-    return;
-  }
-
-  try {
-    const resp = await fetch("save_message.php", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/x-www-form-urlencoded"
-      },
-      body: new URLSearchParams({ name, message })
-    });
-
-    const text = await resp.text();
-    console.log("Raw response:", text);
-
-    let data;
-    try {
-      data = JSON.parse(text);
-    } catch (e) {
-      throw new Error("Server returned invalid JSON");
+    if (!name || !message) {
+      errorText.textContent = "Please enter both name and message.";
+      return;
     }
 
-    if (!resp.ok || data.status !== 'ok') throw new Error(data.msg || "Unknown server error");
+    const messages = JSON.parse(localStorage.getItem("messages") || "{}");
+
+    if (messages[name]) {
+      errorText.textContent = "Please use another name because someone already owns this name.";
+      return;
+    }
+
+    messages[name] = message;
+    localStorage.setItem("messages", JSON.stringify(messages));
 
     paperMessage.innerHTML = `<strong>Name:</strong> ${name}<br><strong>Message:</strong><br>${message}`;
     envelopeBox.classList.add("open");
 
-    const link = `${location.origin}${location.pathname}?name=${encodeURIComponent(name)}`;
-    linkBox.innerHTML = `🔗 Share this link:<br><a href="${link}">${link}</a>`;
-  } catch (err) {
-    errorText.textContent = err.message;
+    const link = `${window.location.origin}${window.location.pathname}?name=${encodeURIComponent(name)}`;
+    shareLinkText.innerHTML = `🔗 Share this link:<br><a href="${link}" target="_blank">${link}</a>`;
+    linkBox.style.display = "block";
   }
-}
 
-window.addEventListener("DOMContentLoaded", async () => {
-  const params = new URLSearchParams(location.search);
-  const name = params.get("name");
-  if (!name) return;
-
-  formSection.style.display = "none";
-  arrowSection.style.display = "block";
-  document.getElementById("envelopeWrapper").classList.add("bottom");
-
-  try {
-    const resp = await fetch(`save_message.php?name=${encodeURIComponent(name)}`);
-    const data = await resp.json();
-
-    if (!resp.ok || data.status !== 'ok') throw new Error(data.msg);
-    paperMessage.innerHTML = `<strong>Name:</strong> ${data.name}<br><strong>Message:</strong><br>${data.message}`;
-  } catch (err) {
-    paperMessage.innerHTML = `<em>${err.message}</em>`;
+  function showForm() {
+    formSection.style.display = "block";
+    arrowSection.style.display = "none";
   }
-});
+
+  function copyLink() {
+    const linkElement = document.querySelector("#shareLinkText a");
+
+    if (linkElement) {
+      const link = linkElement.href;
+      navigator.clipboard.writeText(link)
+        .then(() => {
+          copyPopup.style.display = "block";
+          setTimeout(() => {
+            copyPopup.style.display = "none";
+          }, 2000);
+        })
+        .catch(() => {
+          alert("❌ Failed to copy the link. Please try manually.");
+        });
+    } else {
+      alert("⚠️ Link not found.");
+    }
+  }
+
+  window.addEventListener("DOMContentLoaded", () => {
+    const params = new URLSearchParams(window.location.search);
+    const name = params.get("name");
+
+    if (name) {
+      const messages = JSON.parse(localStorage.getItem("messages") || "{}");
+      const message = messages[name.toLowerCase()];
+      formSection.style.display = "none";
+      arrowSection.style.display = "block";
+
+      if (message) {
+        paperMessage.innerHTML = `<strong>Name:</strong> ${name}<br><strong>Message:</strong><br>${message}`;
+        envelopeBox.classList.add("open");
+      } else {
+        paperMessage.innerHTML = `<em>Message not found for this name.</em>`;
+      }
+    }
+  });
