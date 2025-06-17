@@ -1,11 +1,11 @@
 <?php
 header('Content-Type: application/json');
 
-// Database connection
+// Localhost connection
 $host = '127.0.0.1';
-$db   = 'message_db';
+$db   = 'message_db';   // Palitan kung iba ang database name mo
 $user = 'root';
-$pass = '';
+$pass = '';             // Default: walang password sa XAMPP
 
 $conn = new mysqli($host, $user, $pass, $db);
 
@@ -15,7 +15,6 @@ if ($conn->connect_error) {
     exit;
 }
 
-// 🟢 POST request = Save/Update message
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $name    = strtolower(trim($_POST['name'] ?? ''));
     $message = trim($_POST['message'] ?? '');
@@ -26,41 +25,39 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit;
     }
 
-    // Check if name exists
-    $stmt = $conn->prepare("SELECT id FROM messages WHERE name = ?");
-    $stmt->bind_param("s", $name);
+    $stmt = $conn->prepare("UPDATE messages SET message = ? WHERE name = ?");
+    $stmt->bind_param("ss", $message, $name);
     $stmt->execute();
-    $stmt->store_result();
 
-    if ($stmt->num_rows > 0) {
-        // UPDATE
-        $stmt = $conn->prepare("UPDATE messages SET message = ? WHERE name = ?");
-        $stmt->bind_param("ss", $message, $name);
-        $stmt->execute();
-
+    if ($stmt->affected_rows > 0) {
         echo json_encode(['status' => 'ok', 'msg' => 'Message updated.']);
     } else {
-        // INSERT
-        $stmt = $conn->prepare("INSERT INTO messages (name, message) VALUES (?, ?)");
-        $stmt->bind_param("ss", $name, $message);
-        $stmt->execute();
-
-        echo json_encode(['status' => 'ok', 'msg' => 'Message saved.']);
+        http_response_code(404);
+        echo json_encode(['status' => 'error', 'msg' => 'Name not found.']);
     }
     exit;
 }
 
-// 🟢 GET request = Fetch message
-if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['name'])) {
-    $name = strtolower(trim($_GET['name']));
+if ($_SERVER['REQUEST_METHOD'] === 'GET') {
+    $name = strtolower(trim($_GET['name'] ?? ''));
+
+    if ($name === '') {
+        http_response_code(400);
+        echo json_encode(['status' => 'error', 'msg' => 'Name is required.']);
+        exit;
+    }
 
     $stmt = $conn->prepare("SELECT message FROM messages WHERE name = ?");
     $stmt->bind_param("s", $name);
     $stmt->execute();
-    $stmt->bind_result($message);
+    $result = $stmt->get_result();
 
-    if ($stmt->fetch()) {
-        echo json_encode(['status' => 'ok', 'name' => $name, 'message' => $message]);
+    if ($row = $result->fetch_assoc()) {
+        echo json_encode([
+            'status'  => 'ok',
+            'name'    => $name,
+            'message' => $row['message']
+        ]);
     } else {
         http_response_code(404);
         echo json_encode(['status' => 'error', 'msg' => 'Message not found.']);
@@ -68,6 +65,5 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['name'])) {
     exit;
 }
 
-// Default response
-http_response_code(400);
-echo json_encode(['status' => 'error', 'msg' => 'Invalid request.']);
+http_response_code(405);
+echo json_encode(['status' => 'error', 'msg' => 'Invalid request method.']);
