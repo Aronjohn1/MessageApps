@@ -3,7 +3,7 @@ header('Content-Type: application/json');
 
 // Localhost connection
 $host = '127.0.0.1';
-$db   = 'message_db';   // Palitan kung iba ang database name mo
+$db   = 'message';   // Palitan kung iba ang database name mo
 $user = 'root';
 $pass = '';             // Default: walang password sa XAMPP
 
