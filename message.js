@@ -18,7 +18,7 @@ async function sendMessage() {
   }
 
   try {
-    const resp = await fetch("save_message.php", {
+    const resp = await fetch("server.php", {
       method: "POST",
       headers: { "Content-Type": "application/x-www-form-urlencoded" },
       body: new URLSearchParams({ name, message })
@@ -57,7 +57,7 @@ window.addEventListener("DOMContentLoaded", async () => {
   document.getElementById("envelopeWrapper").classList.add("bottom");
 
   try {
-    const resp  = await fetch(`save_message.php?name=${encodeURIComponent(name)}`);
+  const resp = await fetch(`server.php?name=${encodeURIComponent(name)}`);
     const data  = await resp.json();
 
     if (!resp.ok) throw new Error(data.msg);
