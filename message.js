@@ -10,11 +10,6 @@ envelopeBox.addEventListener("click", () => envelopeBox.classList.toggle("open")
 async function sendMessage() {
   const name = document.getElementById("nameInput").value.trim().toLowerCase();
   const message = document.getElementById("msgInput").value.trim();
-  const errorText = document.getElementById("errorText");
-  const paperMessage = document.getElementById("paperMessage");
-  const linkBox = document.getElementById("linkBox");
-  const envelopeBox = document.getElementById("envelopeBox");
-
   errorText.textContent = "";
 
   if (!name || !message) {
@@ -41,13 +36,11 @@ async function sendMessage() {
       throw new Error("Server returned invalid JSON");
     }
 
-    if (!resp.ok) throw new Error(data.msg || "Unknown server error");
+    if (!resp.ok || data.status !== 'ok') throw new Error(data.msg || "Unknown server error");
 
-    // Show message visually
     paperMessage.innerHTML = `<strong>Name:</strong> ${name}<br><strong>Message:</strong><br>${message}`;
     envelopeBox.classList.add("open");
 
-    // Generate link to retrieve
     const link = `${location.origin}${location.pathname}?name=${encodeURIComponent(name)}`;
     linkBox.innerHTML = `🔗 Share this link:<br><a href="${link}">${link}</a>`;
   } catch (err) {
@@ -55,14 +48,9 @@ async function sendMessage() {
   }
 }
 
-
 window.addEventListener("DOMContentLoaded", async () => {
   const params = new URLSearchParams(location.search);
   const name = params.get("name");
-  const paperMessage = document.getElementById("paperMessage");
-  const formSection = document.getElementById("form-section");
-  const arrowSection = document.getElementById("arrowSection");
-
   if (!name) return;
 
   formSection.style.display = "none";
@@ -73,10 +61,9 @@ window.addEventListener("DOMContentLoaded", async () => {
     const resp = await fetch(`save_message.php?name=${encodeURIComponent(name)}`);
     const data = await resp.json();
 
-    if (!resp.ok) throw new Error(data.msg);
+    if (!resp.ok || data.status !== 'ok') throw new Error(data.msg);
     paperMessage.innerHTML = `<strong>Name:</strong> ${data.name}<br><strong>Message:</strong><br>${data.message}`;
   } catch (err) {
     paperMessage.innerHTML = `<em>${err.message}</em>`;
   }
 });
-
