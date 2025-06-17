@@ -1,10 +1,12 @@
 <?php
 header('Content-Type: application/json');
 
+// Localhost connection (e.g., XAMPP)
 $host = '127.0.0.1';
-$db   = 'message';
+$db   = 'message';  
 $user = 'root';
-$pass = ''; 
+$pass = '';           
+
 $conn = new mysqli($host, $user, $pass, $db);
 
 if ($conn->connect_error) {
@@ -23,37 +25,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit;
     }
 
-    $stmt = $conn->prepare("SELECT id FROM messages WHERE name = ?");
-    $stmt->bind_param("s", $name);
-    $stmt->execute();
-    $stmt->store_result();
-    if ($stmt->num_rows > 0) {
-        http_response_code(409);
-        echo json_encode(['status' => 'error', 'msg' => 'This name is already used.']);
-        exit;
-    }
-
-    $stmt = $conn->prepare("INSERT INTO messages (name, message) VALUES (?, ?)");
-    $stmt->bind_param("ss", $name, $message);
+    $stmt = $conn->prepare("UPDATE messages SET message = ? WHERE name = ?");
+    $stmt->bind_param("ss", $message, $name);
     $stmt->execute();
 
-    echo json_encode(['status' => 'ok']);
-    exit;
-}
-
-if (isset($_GET['name'])) {
-    $name = strtolower(trim($_GET['name']));
-
-    $stmt = $conn->prepare("SELECT message FROM messages WHERE name = ?");
-    $stmt->bind_param("s", $name);
-    $stmt->execute();
-    $stmt->bind_result($message);
-
-    if ($stmt->fetch()) {
-        echo json_encode(['status' => 'ok', 'name' => $name, 'message' => $message]);
+    if ($stmt->affected_rows > 0) {
+        echo json_encode(['status' => 'ok', 'msg' => 'Message updated.']);
     } else {
         http_response_code(404);
-        echo json_encode(['status' => 'error', 'msg' => 'Message not found.']);
+        echo json_encode(['status' => 'error', 'msg' => 'Name not found.']);
     }
     exit;
 }
