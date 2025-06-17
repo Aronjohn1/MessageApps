@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Follow for more Videos!</title>
+  <link rel="stylesheet" href="message.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" crossorigin="anonymous" />
+</head>
+<body>
+
+<div class="container">
+
+  <div class="title-text">
+    <h3>Create a Message 🫶</h3>
+  </div>
+
+  <div id="form-section">
+    <input type="text" id="nameInput" placeholder="Enter your name">
+    <textarea id="msgInput" rows="4" placeholder="Enter your message..."></textarea>
+    <button onclick="sendMessage()">Send Message</button>
+    <div class="error" id="errorText"></div>
+  </div>
+
+
+
+<div id="envelopeWrapper">
+  <div class="envelope-container" id="envelopeBox">
+    <h1>Click The Envelope😍</h1>
+    <div class="paper" id="paperMessage"></div>
+    <div class="envelope">
+      <div class="flap"></div>
+    </div>
+    <div class="heart"><i class="fa-solid fa-heart"></i></div>
+  </div>
+</div>
+
+
+  <div class="arrow-section" id="arrowSection" onclick="showForm()">
+    <div class="arrow-icon">⬇️</div>
+    <h1>Gusto mo gumawa? Click the blue arrow</h1>
+  </div>
+
+  <div class="link-box" id="linkBox"></div>
+</div>
+
+<script src="message.js"></script>
+
+</body>
+</html>

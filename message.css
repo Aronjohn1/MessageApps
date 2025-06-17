@@ -1,0 +1,317 @@
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body{
+     background: rgb(189, 132, 157);
+  
+}
+
+    .container {
+      width: 100%;
+
+
+display: flex;
+justify-content: center;
+flex-direction: column;
+align-items: center;
+
+    }
+.title-text{
+    text-align: center;
+color: white;
+font-size: 25px;
+font-family: sans-serif;
+font-weight: 600;
+
+
+
+
+
+
+}
+ 
+    #form-section{
+margin-top: 50px;
+
+display: flex;
+flex-direction: column;
+justify-content: center;
+align-items: center;
+gap: 10px;
+
+width: 400px;
+
+    }
+
+    .envelope-container {
+      position: relative;
+      width: 400px;
+      height: 250px;
+
+      margin: 20px auto;
+      cursor: pointer;
+
+    }
+      .envelope-container h1{
+        font-size: 20px;
+        font-family: sans-serifs;
+        font-weight: 400;
+        font-style: normal;
+        margin-top: -20px;
+        text-align: center;
+      }
+    #envelopeWrapper {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  transition: all 0.5s ease;
+}
+
+#envelopeWrapper.bottom {
+  align-items: flex-end;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding-bottom: 20px;
+  z-index: 10;
+}
+
+
+    .envelope {
+      position: absolute;
+      bottom: 0;
+      width: 100%;
+
+      height: 200px;
+      background: #ff8fab;
+      border-radius: 6px;
+      overflow: hidden;
+      box-shadow: 0 0 10px #a4133c;
+      z-index: 1;
+    }
+
+    .flap {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      background: #fb6f92;
+      clip-path: polygon(0 0, 100% 0, 50% 50%);
+      transform-origin: top center;
+      transition: transform 0.8s ease;
+      z-index: 3;
+    }
+
+    .paper {
+      position: absolute;
+      bottom: 10px;
+
+      width: 100%;
+      height: 200px;
+      background: #ffe5ec;
+      border-radius: 5px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      padding: 10px;
+      transform: translateY(0);
+      opacity: 0;
+      transition: transform 1s ease, opacity 0.5s ease;
+      z-index: 0;
+    }
+
+    .open .flap {
+      transform: rotateX(-150deg);
+    }
+
+    .open .paper {
+      transform: translateY(-160px);
+      opacity: 1;
+      z-index: 2;
+    }
+
+    .link-box {
+ 
+      word-break: break-word;
+      color: white;
+
+    }
+
+    .error {
+      color: red;
+      font-size: 0.9em;
+    }
+       
+    .link-box a {
+      color: red;
+      text-decoration: underline;
+    }
+.heart {
+  position: absolute;
+  top: 100px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: none; 
+  z-index: 2;
+  animation: pulse 1s infinite;
+}
+
+.heart i {
+  font-size: 100px;
+  color: #ff0057;
+}
+    
+.envelope-container.open .heart {
+  display: block;
+}
+
+@keyframes pulse {
+  0%, 100% { transform: translateX(-50%) scale(1); }
+  50% { transform: translateX(-50%) scale(1.2); }
+}
+
+    .arrow-section {
+      display: none;
+      margin-top: 100px;
+      text-align: center;
+      cursor: pointer;
+      color: white;
+      font-weight: bold;
+      font-size: 10px;
+    }
+
+    .arrow-icon {
+      font-size: 24px;
+      animation: bounce 1s infinite;
+    }
+
+
+#form-section button{
+ width: 100%;
+ height: 50px;
+      font-size: 18px;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      background: linear-gradient(270deg, #cbeef3, #ff8fab, #dd2d4a, #028090, #880d1e);
+      background-size: 600% 600%;
+      animation: rotateColors 8s ease infinite;
+      transition: transform 0.2s;
+   
+}
+#form-section button:hover{
+     transform: scale(1.05);
+}
+    @keyframes rotateColors {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    @keyframes bounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(5px); }
+    }
+#form-section input{
+    width: 100%;
+    height: 50px;
+      text-align: center;
+
+}
+#form-section textarea{
+    width: 100%;
+    height: 200px;
+    padding: 10px 30px;
+}
+  
+  
+    #form-section input, textarea{
+             outline: none; 
+             
+      font-size: 18px;
+      color: white;
+      background-color: #222;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      position: relative;
+      z-index: 0;
+      box-shadow: inset 0 0 10px #ff0057;
+      animation: insetGlow 4s linear infinite;
+      transition: transform 0.2s;
+overflow-y: hidden;
+
+
+    }
+
+     #form-section input, textarea:hover{
+         transform: scale(1.05);
+     }
+       @keyframes insetGlow {
+      0%   { box-shadow: inset 0 0 15px #cbeef3; }
+      25%  { box-shadow: inset 0 0 15px #ff8fab; }
+      50%  { box-shadow: inset 0 0 15px #dd2d4a; }
+      75%  { box-shadow: inset 0 0 15px #fffd44; }
+      100% { box-shadow: inset 0 0 15px #880d1e; }
+    }
+
+
+ 
+@media (max-width: 768px) {
+  .container {
+    padding: 10px;
+  }
+
+  .title-text {
+    font-size: 20px;
+  }
+
+  #form-section {
+    width: 100%;
+    padding: 0 10px;
+    margin-top: 30px;
+  }
+
+  .envelope-container {
+    width: 100%;
+    height: 200px;
+  }
+
+  .paper {
+    height: 180px;
+  }
+
+  .envelope {
+    height: 180px;
+  }
+
+  .heart i {
+    font-size: 100px;
+    margin-top: -30px;
+  }
+
+  .arrow-section {
+    font-size: 12px;
+  }
+
+  #form-section textarea {
+    height: 150px;
+  }
+}
+
+
+@media (max-width: 1024px) {
+  .container {
+    padding: 20px;
+  }
+
+  #form-section {
+    width: 90%;
+  }
+
+  .envelope-container {
+    width: 90%;
+  }
+}
