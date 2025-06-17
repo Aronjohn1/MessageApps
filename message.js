@@ -1,3 +1,12 @@
+const envelopeBox  = document.getElementById("envelopeBox");
+const paperMessage = document.getElementById("paperMessage");
+const errorText    = document.getElementById("errorText");
+const linkBox      = document.getElementById("linkBox");
+const formSection  = document.getElementById("form-section");
+const arrowSection = document.getElementById("arrowSection");
+
+envelopeBox.addEventListener("click", () => envelopeBox.classList.toggle("open"));
+
 async function sendMessage() {
   const name = document.getElementById("nameInput").value.trim().toLowerCase();
   const message = document.getElementById("msgInput").value.trim();
