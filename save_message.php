@@ -1,12 +1,13 @@
-
 <?php
 header('Content-Type: application/json');
+
 
 $host = '127.0.0.1';
 $db   = 'message';
 $user = 'root';
 $pass = ''; 
 $conn = new mysqli($host, $user, $pass, $db);
+
 
 if ($conn->connect_error) {
     http_response_code(500);
@@ -24,6 +25,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit;
     }
 
+ 
     $stmt = $conn->prepare("SELECT id FROM messages WHERE name = ?");
     $stmt->bind_param("s", $name);
     $stmt->execute();
@@ -38,9 +40,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $stmt->bind_param("ss", $name, $message);
     $stmt->execute();
 
-    echo json_encode(['status' => 'ok']);
+  echo json_encode(['status' => 'ok', 'name' => $name]);
+
     exit;
 }
+
 
 if (isset($_GET['name'])) {
     $name = strtolower(trim($_GET['name']));
@@ -58,6 +62,7 @@ if (isset($_GET['name'])) {
     }
     exit;
 }
+
 
 http_response_code(400);
 echo json_encode(['status' => 'error', 'msg' => 'Invalid request.']);
